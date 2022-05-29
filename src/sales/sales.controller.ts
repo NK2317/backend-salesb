@@ -1,44 +1,66 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ProductOnOrder } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { OrderPayloadType } from './types';
 
 @Controller('sales')
 export class SalesController {
   constructor(private readonly prismaService: PrismaService) {}
 
   @Post() // Create the ProductOnOrder detail for products and order and finalize the orderS
-  async create(@Body() saleItems: ProductOnOrder[]) {
+  async create(
+    @Body() { selectedProducts, userID, clientForLoanId }: OrderPayloadType,
+  ) {
     try {
-      const total = saleItems.reduce((acc, current) => acc + current.Qty, 0);
+      const total = selectedProducts.reduce(
+        (acc, current) => acc + current.qty * current.product.price,
+        0,
+      );
 
-      const createdRows = await this.prismaService.productOnOrder.createMany({
-        data: saleItems,
+      const newOrder = await this.prismaService.order.create({
+        data: {
+          userID,
+          clientID: clientForLoanId,
+          amount: total,
+          status: true,
+        },
       });
 
-      // Finalize the order
-      const finalizedOrder = await this.prismaService.order.update({
-        where: { id: saleItems[0].OrderID },
-        data: { status: true, amount: total },
+      const productOnOrder = selectedProducts.map(({ product, qty }) => {
+        return {
+          orderID: newOrder.id,
+          productID: product.id,
+          qty,
+        };
       });
 
-      return { data: { createdRows, finalizedOrder }, error: false };
+      const productsOnOrder =
+        await this.prismaService.productOnOrder.createMany({
+          data: productOnOrder,
+        });
+
+      return { data: { newOrder, productsOnOrder }, error: false };
     } catch (error) {
+      console.error(error);
       return { error, data: [] };
     }
   }
 
-  @Get(':OrderID')
-  async fetchSale(@Param('OrderID') OrderID: number) {
+  @Get(':orderID')
+  async fetchSale(@Param('orderID') orderID: string) {
     try {
       const productsOnOrder = await this.prismaService.productOnOrder.findMany({
-        where: { OrderID },
+        where: { orderID: parseInt(orderID) },
         include: {
-          Product: true,
-          Order: true,
+          Product: {
+            include: {
+              Category: true,
+            },
+          },
         },
       });
       return { error: false, data: productsOnOrder };
     } catch (error) {
+      console.error(error);
       return { error, data: [] };
     }
   }

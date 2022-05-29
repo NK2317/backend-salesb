@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,6 +12,8 @@ model Product {
   name String
   description String
   price Float
+  providerPrice Float @default(0)
+  code String @default("")
   unit String // Is it a bottle? a bag? etc...
   categoryID Int
 
@@ -23,15 +22,28 @@ model Product {
   Category Category @relation(fields: [categoryID], references: [id])
 }
 
+model Packages {
+  id Int @id @default(autoincrement())
+  name String
+  code String
+}
+
+model ProductOnPackage {
+  id Int @id @default(autoincrement())
+  productID Int
+  PackageID Int
+  ProductQty Float
+}
+
 model ProductOnOrder {
   id Int @id @default(autoincrement())
   productID Int
-  OrderID Int
-  Qty Float
+  orderID Int
+  qty Float
 
   // relations
   Product Product @relation(fields: [productID], references: [id])
-  Order Order @relation(fields: [OrderID], references: [id])
+  Order Order @relation(fields: [orderID], references: [id])
 }
 
 model Order {
@@ -75,7 +87,7 @@ model User {
   id Int @id @default(autoincrement())
   name String
   userName String
+  // migrate password to other field
   password String
-
   Orders Order[]
 }

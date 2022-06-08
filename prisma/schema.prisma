@@ -53,13 +53,13 @@ model Order {
   clientID Int? // for loans
   userID Int // for user creator
   status String // unconfirmed, confirmed, closed
-  idCashCut Int
+  idCashCut Int?
 
   // relations
   ProductOnOrders ProductOnOrder[]
   Client Client? @relation(fields: [clientID], references: [id])
   UserCreator User @relation(fields: [userID], references: [id])
-  CashCut CashCut @relation(fields: [idCashCut], references: [id])
+  CashCut CashCut? @relation(fields: [idCashCut], references: [id])
 }
 
 model Category {

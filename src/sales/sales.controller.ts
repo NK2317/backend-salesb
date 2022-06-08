@@ -21,7 +21,7 @@ export class SalesController {
           userID,
           clientID: clientForLoanId,
           amount: total,
-          status: true,
+          status: 'confirmed',
         },
       });
 

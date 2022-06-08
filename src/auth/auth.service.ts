@@ -18,8 +18,9 @@ export class AuthService {
     const user = await this.prismaService.user.findFirst({
       where: { userName: _username },
     });
+
     if (user) {
-      if (bcrypt.compare(_password, user.password)) {
+      if (await bcrypt.compare(_password, user.password)) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...result } = user;
         return result;

@@ -52,12 +52,14 @@ model Order {
   amount Float
   clientID Int? // for loans
   userID Int // for user creator
-  status Boolean @default(false)
+  status String // unconfirmed, confirmed, closed
+  idCashCut Int
 
   // relations
   ProductOnOrders ProductOnOrder[]
   Client Client? @relation(fields: [clientID], references: [id])
   UserCreator User @relation(fields: [userID], references: [id])
+  CashCut CashCut @relation(fields: [idCashCut], references: [id])
 }
 
 model Category {
@@ -81,6 +83,11 @@ model Client {
 model CashCut {
   id Int @id @default(autoincrement())
   creationDate DateTime @default(now())
+  endDate DateTime?
+  status String //aviable closed
+  ammount Float // guardar el total de ventas
+
+  Orders Order[]
 }
 
 model User {

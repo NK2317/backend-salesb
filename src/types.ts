@@ -1,4 +1,4 @@
-export type SkipTakeQuery = {
+export class SkipTakeQuery {
   skip: number;
   take: number;
 };

@@ -23,7 +23,8 @@ export class AuthService {
       if (await bcrypt.compare(_password, user.password)) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...result } = user;
-        return { ...result, tokenExpires: '24h' };
+        let userDat = { ...result, tokenExpires: '24h' };
+        return console.log(`Token Init <-> ${Date()} <----> Token Exp Time  ${userDat.tokenExpires}`), userDat; 
       } else {
         throw new UnauthorizedException();
       }

@@ -10,6 +10,7 @@ import { ClientModule } from './client/client.module';
 import { UserModule } from './user/user.module';
 import { LoginModule } from './login/login.module';
 import { AuthModule } from './auth/auth.module';
+import { CashCutModule } from './cash-cut/cash-cut.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     LoginModule,
     AuthModule,
+    CashCutModule
   ],
   controllers: [AppController],
   providers: [AppService],

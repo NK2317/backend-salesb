@@ -8,63 +8,63 @@ datasource db {
 }
 
 model Product {
-  id Int @id @default(autoincrement())
-  name String
-  description String
-  price Float
-  providerPrice Float @default(0)
-  code String @default("")
-  unit String // Is it a bottle? a bag? etc...
-  categoryID Int
+  id            Int    @id @default(autoincrement())
+  name          String
+  description   String
+  price         Float
+  providerPrice Float  @default(0)
+  code          String @default("")
+  unit          String // Is it a bottle? a bag? etc...
+  categoryID    Int
 
   //trlations
   ProductOrderDetails ProductOnOrder[]
-  Category Category @relation(fields: [categoryID], references: [id])
+  Category            Category         @relation(fields: [categoryID], references: [id])
 }
 
 model Packages {
-  id Int @id @default(autoincrement())
+  id   Int    @id @default(autoincrement())
   name String
   code String
 }
 
 model ProductOnPackage {
-  id Int @id @default(autoincrement())
-  productID Int
-  PackageID Int
+  id         Int   @id @default(autoincrement())
+  productID  Int
+  PackageID  Int
   ProductQty Float
 }
 
 model ProductOnOrder {
-  id Int @id @default(autoincrement())
+  id        Int   @id @default(autoincrement())
   productID Int
-  orderID Int
-  qty Float
+  orderID   Int
+  qty       Float
 
   // relations
   Product Product @relation(fields: [productID], references: [id])
-  Order Order @relation(fields: [orderID], references: [id])
+  Order   Order   @relation(fields: [orderID], references: [id])
 }
 
 model Order {
-  id Int @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   creationDate DateTime @default(now())
-  amount Float
-  clientID Int? // for loans
-  userID Int // for user creator
-  status String // unconfirmed, confirmed, closed
-  idCashCut Int?
+  amount       Float
+  clientID     Int? // for loans
+  userID       Int // for user creator
+  status       String // unconfirmed, confirmed, closed
+  idCashCut    Int?
 
   // relations
   ProductOnOrders ProductOnOrder[]
-  Client Client? @relation(fields: [clientID], references: [id])
-  UserCreator User @relation(fields: [userID], references: [id])
-  CashCut CashCut? @relation(fields: [idCashCut], references: [id])
+  Client          Client?          @relation(fields: [clientID], references: [id])
+  UserCreator     User             @relation(fields: [userID], references: [id])
+  CashCut         CashCut?         @relation(fields: [idCashCut], references: [id])
 }
 
 model Category {
-  id Int @id @default(autoincrement())
-  name String
+  id          Int    @id @default(autoincrement())
+  name        String
   description String
 
   //relations
@@ -72,29 +72,29 @@ model Category {
 }
 
 model Client {
-  id Int @id @default(autoincrement())
-  name String
-  status String @default("aviable")
+  id        Int      @id @default(autoincrement())
+  name      String
+  status    String   @default("aviable")
   createdAt DateTime @default(now())
 
   Orders Order[]
 }
 
 model CashCut {
-  id Int @id @default(autoincrement())
-  creationDate DateTime @default(now())
-  endDate DateTime?
-  status String //aviable closed
-  ammount Float // guardar el total de ventas
+  id           Int       @id @default(autoincrement())
+  creationDate DateTime  @default(now())
+  endDate      DateTime?
+  status       String    @default("open") //aviable closed
+  amount       Float     @default(0) // guardar el total de ventas
 
   Orders Order[]
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  name String
+  id       Int     @id @default(autoincrement())
+  name     String
   userName String
   // migrate password to other field
   password String
-  Orders Order[]
+  Orders   Order[]
 }
